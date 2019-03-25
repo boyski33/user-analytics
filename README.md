@@ -9,3 +9,13 @@ Python version = 3.7
 
 1. Create a virtual environment using `venv`
 2. Go to the project root and execute `pip install -r requirements.txt`
+
+
+
+#### Ideas
+
+1. In the future, models can be trained cross-survey, meaning the submissions
+to one survey would impact the ML model for all surveys. For instance, if 
+two separate surveys have the same question ("What is your favorite pizza?"),
+the answers of both surveys can be summed and used to train a common ML model.
+
