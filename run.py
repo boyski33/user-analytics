@@ -15,9 +15,9 @@ def run_app():
                        instance_port=config["service_port"])
 
     try:
-        res = eureka_client.do_service("HIPPO-DOMAIN-SURVEY", "/surveys")
+        res = eureka_client.do_service("HIPPO-CORE-SURVEY", "/surveys")
         print("result: " + res)
-    except requests.HTTPError as e:
+    except Exception as e:
         print(e)
 
     app.run(port=config["service_port"])
