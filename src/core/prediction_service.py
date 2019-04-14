@@ -16,13 +16,9 @@ col_gender = class_columns[1:]
 
 class PredictionService:
 
-    def __init__(self, df: pd.DataFrame, feature_columns=None):
+    def __init__(self, df: pd.DataFrame, feature_columns:tuple=('Q1', 'Q2', 'Q3')):
         self.df = df
-
-        if feature_columns is None:
-            feature_columns = ['Q1', 'Q2', 'Q3']
-
-        self.feature_columns = feature_columns
+        self.feature_columns = list(feature_columns)
         self.age_model = LinearRegression()
         self.gender_model = LogisticRegression()
 

@@ -34,5 +34,5 @@ class AnalyticsService:
     def test(self):
         df = self.mock_data()
 
-        prediction_service = PredictionService(df, feature_columns=['Q1', 'Q2', 'Q3'])
+        prediction_service = PredictionService(df, feature_columns=('Q1', 'Q2', 'Q3'))
         prediction_service.train()
