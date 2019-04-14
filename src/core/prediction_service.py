@@ -42,6 +42,7 @@ def train():
     # gaussian_nb_test(feature_sets, genders)
     # random_forest_test(feature_sets, genders)
     # logistic_regression_test(feature_sets, genders)
+    linear_regression_test(feature_sets, ages)
 
 
 ### TRAINING METHODS ###
@@ -88,6 +89,12 @@ def logistic_regression_test(x, y):
     logreg_model = logistic_regression_train(X_train, y_train)
 
     print("LogReg accuracy: {0:.4f}".format(metrics.accuracy_score(y_test, logreg_model.predict(X_test))))
+
+def linear_regression_test(x, y):
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=31)
+    linreg_model = linear_regression_train(X_train, y_train)
+
+    print("LinReg mean error: {0:.4f}".format(metrics.mean_absolute_error(y_test, linreg_model.predict(X_test))))
 
 
 def one_hot_encode(encoder, row):
