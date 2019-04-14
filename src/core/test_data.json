@@ -1,0 +1,22 @@
+{
+  "Q1": [
+    "red",
+    "red",
+    "blue"
+  ],
+  "Q2": [
+    "history",
+    "psychology",
+    "engineering"
+  ],
+  "Q3": [
+    "volleyball",
+    "tennis",
+    "basketball"
+  ],
+  "gender": [
+    "f",
+    "f",
+    "m"
+  ]
+}
