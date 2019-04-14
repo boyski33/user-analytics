@@ -1,7 +1,7 @@
 import json
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression, LinearRegression
@@ -9,116 +9,89 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import OneHotEncoder
 
-
-def train():
-    df = get_data()
-
-    feature_col_names = ['Q1', 'Q2', 'Q3']
-    class_columns = ['age', 'gender']
-    col_age = class_columns[:1]
-    col_gender = class_columns[1:]
-
-    # Dummy Variables & One Hot Encoding
-    feature_sets = pd.get_dummies(df, columns=feature_col_names).drop(columns=class_columns).values
-    genders = df[col_gender].values
-    ages = df[col_age].values
-
-    enc = OneHotEncoder()
-    enc.fit(df[feature_col_names].values)
-
-    entry = [['blue', 'history', 'tennis']]
-
-    encoded_entry = one_hot_encode(enc, entry)
-
-    lr_model = linear_regression_train(feature_sets, ages)
-    rf_model = random_forest_train(feature_sets, genders)
-
-    predicted_age = lr_model.predict(encoded_entry)
-    predicted_gender = rf_model.predict(encoded_entry)
-
-    print([int(age) for age in predicted_age])
-    print(predicted_gender)
-
-    # gaussian_nb_test(feature_sets, genders)
-    # random_forest_test(feature_sets, genders)
-    # logistic_regression_test(feature_sets, genders)
-    linear_regression_test(feature_sets, ages)
+class_columns = ['age', 'gender']
+col_age = class_columns[:1]
+col_gender = class_columns[1:]
 
 
-### TRAINING METHODS ###
+class PredictionService:
 
-def linear_regression_train(x, y) -> LinearRegression:
-    lr_model = LinearRegression()
-    return lr_model.fit(x, y.ravel())
+    def __init__(self, df: pd.DataFrame, feature_columns=None):
+        self.df = df
 
+        if feature_columns is None:
+            feature_columns = ['Q1', 'Q2', 'Q3']
 
-def gaussian_nb_train(x, y) -> GaussianNB:
-    nb_model = GaussianNB()
-    nb_model.fit(x, y.ravel())
-    return nb_model
+        self.feature_columns = feature_columns
+        self.age_model = LinearRegression()
+        self.gender_model = LogisticRegression()
 
+    def train(self):
 
-def random_forest_train(x, y) -> RandomForestClassifier:
-    rf_model = RandomForestClassifier(class_weight='balanced', random_state=11)
-    return rf_model.fit(x, y.ravel())
+        # Dummy Variables & One Hot Encoding
+        feature_sets = pd.get_dummies(self.df, columns=self.feature_columns).drop(columns=class_columns).values
+        genders = self.df[col_gender].values
+        ages = self.df[col_age].values
 
-def logistic_regression_train(x, y) -> LogisticRegression:
-    lr_model = LogisticRegression(C=2.2, class_weight='balanced')
-    lr_model.fit(x, y.ravel())
-    return lr_model
+        enc = OneHotEncoder()
+        enc.fit(self.df[self.feature_columns].values)
 
+        entry = [['blue', 'history', 'tennis']]
 
-### TESTING METHODS ###
+        encoded_entry = self.one_hot_encode(enc, entry)
 
-def gaussian_nb_test(x, y):
-    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.5, random_state=31)
-    nb_model = gaussian_nb_train(X_train, y_train)
+        self.age_model = self.linear_regression_train(feature_sets, ages)
+        self.gender_model = self.random_forest_train(feature_sets, genders)
 
-    print("NB accuracy: {0:.4f}".format(metrics.accuracy_score(y_test, nb_model.predict(X_test))))
+        predicted_age = self.age_model.predict(encoded_entry)
+        predicted_gender = self.gender_model.predict(encoded_entry)
 
+        print([int(age) for age in predicted_age])
+        print(predicted_gender)
 
-def random_forest_test(x, y):
-    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.5, random_state=31)
-    rf_model = random_forest_train(X_train, y_train)
+        # self.gaussian_nb_test(feature_sets, genders)
+        # self.random_forest_test(feature_sets, genders)
+        # self.logistic_regression_test(feature_sets, genders)
+        # self.linear_regression_test(feature_sets, ages)
 
-    print("RF accuracy: {0:.4f}".format(metrics.accuracy_score(y_test, rf_model.predict(X_test))))
+    ### TRAINING METHODS ###
 
+    def linear_regression_train(self, x, y) -> LinearRegression:
+        lr_model = LinearRegression()
+        return lr_model.fit(x, y.ravel())
 
-def logistic_regression_test(x, y):
-    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.5, random_state=31)
-    logreg_model = logistic_regression_train(X_train, y_train)
+    def gaussian_nb_train(self, x, y) -> GaussianNB:
+        nb_model = GaussianNB()
+        nb_model.fit(x, y.ravel())
+        return nb_model
 
-    print("LogReg accuracy: {0:.4f}".format(metrics.accuracy_score(y_test, logreg_model.predict(X_test))))
+    def random_forest_train(self, x, y) -> RandomForestClassifier:
+        rf_model = RandomForestClassifier(class_weight='balanced', random_state=11)
+        return rf_model.fit(x, y.ravel())
 
-def linear_regression_test(x, y):
-    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=31)
-    linreg_model = linear_regression_train(X_train, y_train)
+    def logistic_regression_train(self, x, y) -> LogisticRegression:
+        lr_model = LogisticRegression(C=2.2, class_weight='balanced')
+        lr_model.fit(x, y.ravel())
+        return lr_model
 
-    print("LinReg mean error: {0:.4f}".format(metrics.mean_absolute_error(y_test, linreg_model.predict(X_test))))
+    ### TESTING METHODS ###
 
+    def age_model_test(self, x, y):
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state=31)
+        linreg_model = self.linear_regression_train(X_train, y_train)
 
-def one_hot_encode(encoder, row):
-    np_arr = np.array(row)
-    if np_arr.ndim == 1:
-        row = [row]
+        print("Age mean error: {0:.4f}".format(metrics.mean_absolute_error(y_test, linreg_model.predict(X_test))))
 
-    return encoder.transform(row).toarray()
+    def gender_model_test(self, x, y):
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.5, random_state=31)
+        nb_model = self.gaussian_nb_train(X_train, y_train)
 
+        print("Gender accuracy: {0:.4f}".format(metrics.accuracy_score(y_test, nb_model.predict(X_test))))
 
-def get_data():
-    file = './test_data.json'
-    with open(file) as f:
-        json_data = json.load(f)
+    def one_hot_encode(self, encoder, row):
+        np_arr = np.array(row)
+        if np_arr.ndim == 1:
+            row = [row]
 
-    return pd.DataFrame.from_dict(
-        data=json_data,
-        orient='columns'
-    )
+        return encoder.transform(row).toarray()
 
-
-def main():
-    train()
-
-
-if __name__ == '__main__':
-    main()

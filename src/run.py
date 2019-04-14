@@ -9,6 +9,9 @@ from src.api.analyze_controller import *
 
 
 def run_app():
+    analytics_service = AnalyticsService()
+    analytics_service.test()
+
     eureka_client.init(eureka_server=config["eureka_server_url"],
                        app_name=config["service_name"],
                        instance_port=config["service_port"])
