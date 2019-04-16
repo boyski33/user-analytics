@@ -1,10 +1,12 @@
-import json
+import pickle
 
 import numpy as np
 import pandas as pd
+from pymongo import MongoClient
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.linear_model.base import LinearModel
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import OneHotEncoder
@@ -16,59 +18,84 @@ col_gender = class_columns[1:]
 
 class PredictionService:
 
-    def __init__(self, df: pd.DataFrame, feature_columns:tuple=('Q1', 'Q2', 'Q3')):
-        self.df = df
-        self.feature_columns = list(feature_columns)
-        self.age_model = LinearRegression()
-        self.gender_model = LogisticRegression()
+    def __init__(self):
+        self.client = MongoClient(
+            'mongodb+srv://admin:admin@hippo-cluster-gya0k.mongodb.net/hippo-survey-db?retryWrites=true')
+        self.db = self.client['hippo-survey-db']
+        self.models = self.db['ml-models']
 
-    def train(self):
-
+    def train_and_persist_model(self, df: pd.DataFrame, feature_columns: list):
         # Dummy Variables & One Hot Encoding
-        feature_sets = pd.get_dummies(self.df, columns=self.feature_columns).drop(columns=class_columns).values
-        genders = self.df[col_gender].values
-        ages = self.df[col_age].values
+        feature_sets = pd.get_dummies(df, columns=feature_columns).drop(columns=class_columns).values
+        genders = df[col_gender].values
+        ages = df[col_age].values
 
-        enc = OneHotEncoder()
-        enc.fit(self.df[self.feature_columns].values)
+        encoder = OneHotEncoder().fit(df[feature_columns].values)
 
-        entry = [['blue', 'history', 'tennis']]
+        age_model = self.linear_regression_train(feature_sets, ages)
+        gender_model = self.random_forest_train(feature_sets, genders)
 
-        encoded_entry = self.one_hot_encode(enc, entry)
+        self.persist_model(age_model, gender_model, encoder)
 
-        self.age_model = self.linear_regression_train(feature_sets, ages)
-        self.gender_model = self.random_forest_train(feature_sets, genders)
+    def persist_model(self, age_model, gender_model, encoder):
+        # todo pass in surveyId
+        age_binary = pickle.dumps(age_model)
+        gender_binary = pickle.dumps(gender_model)
+        encoder_binary = pickle.dumps(encoder)
 
-        predicted_age = self.age_model.predict(encoded_entry)
-        predicted_gender = self.gender_model.predict(encoded_entry)
+        self.models.insert_one({
+            'surveyId': 'dummy_ID',
+            'ageModel': age_binary,
+            'genderModel': gender_binary,
+            'encoder': encoder_binary
+        })
 
-        print([int(age) for age in predicted_age])
-        print(predicted_gender)
+    def predict_age_and_gender(self, survey_id, example):
+        data = self.models.find_one({'surveyId': survey_id})
+        age_model: LinearModel = pickle.loads(data['ageModel'])
+        gender_model = pickle.loads(data['genderModel'])
+        encoder: OneHotEncoder = pickle.loads(data['encoder'])
 
-        # self.gaussian_nb_test(feature_sets, genders)
-        # self.random_forest_test(feature_sets, genders)
-        # self.logistic_regression_test(feature_sets, genders)
-        # self.linear_regression_test(feature_sets, ages)
+        example = self.one_hot_encode(encoder, example)
+
+        age = age_model.predict(example)
+        gender = gender_model.predict(example)
+
+        return age, gender
+
 
     ### TRAINING METHODS ###
 
-    def linear_regression_train(self, x, y) -> LinearRegression:
+    @staticmethod
+    def linear_regression_train(x, y) -> LinearRegression:
         lr_model = LinearRegression()
         return lr_model.fit(x, y.ravel())
 
-    def gaussian_nb_train(self, x, y) -> GaussianNB:
+    @staticmethod
+    def gaussian_nb_train(x, y) -> GaussianNB:
         nb_model = GaussianNB()
         nb_model.fit(x, y.ravel())
         return nb_model
 
-    def random_forest_train(self, x, y) -> RandomForestClassifier:
+    @staticmethod
+    def random_forest_train(x, y) -> RandomForestClassifier:
         rf_model = RandomForestClassifier(class_weight='balanced', random_state=11)
         return rf_model.fit(x, y.ravel())
 
-    def logistic_regression_train(self, x, y) -> LogisticRegression:
+    @staticmethod
+    def logistic_regresюsion_train(x, y) -> LogisticRegression:
         lr_model = LogisticRegression(C=2.2, class_weight='balanced')
         lr_model.fit(x, y.ravel())
         return lr_model
+
+    @staticmethod
+    def one_hot_encode(encoder: OneHotEncoder, example):
+        np_arr = np.array(example)
+        if np_arr.ndim == 1:
+            example = [example]
+
+        return encoder.transform(example).toarray()
+
 
     ### TESTING METHODS ###
 
@@ -83,11 +110,3 @@ class PredictionService:
         nb_model = self.gaussian_nb_train(X_train, y_train)
 
         print("Gender accuracy: {0:.4f}".format(metrics.accuracy_score(y_test, nb_model.predict(X_test))))
-
-    def one_hot_encode(self, encoder, row):
-        np_arr = np.array(row)
-        if np_arr.ndim == 1:
-            row = [row]
-
-        return encoder.transform(row).toarray()
-

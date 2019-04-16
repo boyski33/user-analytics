@@ -1,22 +1,9 @@
-import json
-
-import pandas as pd
 from flask import Response, request, jsonify
 
 from src.core.analytics_service import AnalyticsService
-from src.core.prediction_service import PredictionService
 from src.run import app
 
 analytics_service = AnalyticsService()
-
-
-@app.route("/")
-def hello():
-    all_surveys = analytics_service.get_all_surveys()
-    print(all_surveys)
-
-    return Response(all_surveys, mimetype='application/json')
-
 
 @app.route("/submission-batch", methods=['POST'])
 def post_submission_batch():
@@ -24,3 +11,14 @@ def post_submission_batch():
     return jsonify(submission_batch)
 
 
+@app.route("/train")
+def train_model():
+    analytics_service.train()
+
+    return Response()
+
+@app.route("/predict", methods=['POST'])
+def predict():
+    age, gender = analytics_service.predict('dummy_ID', [['blue', 'history', 'tennis']])
+
+    return jsonify(age=age, gender=gender)

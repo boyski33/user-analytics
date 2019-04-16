@@ -1,25 +1,15 @@
 import json
-import os
 
 import pandas as pd
-from pymongo import MongoClient
 
 from src.core.prediction_service import PredictionService
 
+mock_feature_cols = ['Q1', 'Q2', 'Q3']
 
 class AnalyticsService:
 
     def __init__(self):
-        self.client = MongoClient(
-            'mongodb+srv://admin:admin@hippo-cluster-gya0k.mongodb.net/hippo-survey-db?retryWrites=true')
-        self.db = self.client['hippo-survey-db']
-
-    def get_all_surveys(self):
-        users = self.db['users']
-        cursor = users.find({})
-        result = [x for x in cursor]
-
-        return str(result)
+        self.prediction_service = PredictionService()
 
     def mock_data(self):
         file = 'mock_data/test_data.json'
@@ -31,8 +21,11 @@ class AnalyticsService:
             orient='columns'
         )
 
-    def test(self):
+    def train(self):
         df = self.mock_data()
+        self.prediction_service.train_and_persist_model(df, mock_feature_cols)
 
-        prediction_service = PredictionService(df, feature_columns=('Q1', 'Q2', 'Q3'))
-        prediction_service.train()
+    def predict(self, survey_id, example):
+        age, gender = self.prediction_service.predict_age_and_gender(survey_id, example)
+
+        return list([int(a) for a in age]), list(gender)
