@@ -6,12 +6,27 @@ from src.core.prediction_service import PredictionService
 
 mock_feature_cols = ['Q1', 'Q2', 'Q3']
 
+
 class AnalyticsService:
 
     def __init__(self):
         self.prediction_service = PredictionService()
 
-    def mock_data(self):
+    def train(self, survey_id: str, data: dict):
+        df = self.convert_json_to_panda(data)
+        self.prediction_service.train_and_persist_model(survey_id, df, mock_feature_cols)
+
+    def predict(self, survey_id, data: dict):
+        example = self.normalize_example(data)
+
+        age, gender = self.prediction_service.predict_age_and_gender(survey_id, example)
+
+        return list([int(a) for a in age]), list(gender)
+
+    @staticmethod
+    def convert_json_to_panda(data: dict) -> pd.DataFrame:
+        print(data)
+
         file = 'mock_data/test_data.json'
         with open(file) as f:
             json_data = json.load(f)
@@ -21,11 +36,6 @@ class AnalyticsService:
             orient='columns'
         )
 
-    def train(self):
-        df = self.mock_data()
-        self.prediction_service.train_and_persist_model(df, mock_feature_cols)
-
-    def predict(self, survey_id, example):
-        age, gender = self.prediction_service.predict_age_and_gender(survey_id, example)
-
-        return list([int(a) for a in age]), list(gender)
+    @staticmethod
+    def normalize_example(data: dict) -> list:
+        return [['red', 'history', 'basketball']]

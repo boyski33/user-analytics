@@ -24,7 +24,7 @@ class PredictionService:
         self.db = self.client['hippo-survey-db']
         self.models = self.db['ml-models']
 
-    def train_and_persist_model(self, df: pd.DataFrame, feature_columns: list):
+    def train_and_persist_model(self, survey_id: str, df: pd.DataFrame, feature_columns: list):
         # Dummy Variables & One Hot Encoding
         feature_sets = pd.get_dummies(df, columns=feature_columns).drop(columns=class_columns).values
         genders = df[col_gender].values
@@ -35,22 +35,25 @@ class PredictionService:
         age_model = self.linear_regression_train(feature_sets, ages)
         gender_model = self.random_forest_train(feature_sets, genders)
 
-        self.persist_model(age_model, gender_model, encoder)
+        self.persist_model(survey_id, age_model, gender_model, encoder)
 
-    def persist_model(self, age_model, gender_model, encoder):
-        # todo pass in surveyId
+    def persist_model(self, survey_id, age_model, gender_model, encoder):
         age_binary = pickle.dumps(age_model)
         gender_binary = pickle.dumps(gender_model)
         encoder_binary = pickle.dumps(encoder)
 
-        self.models.insert_one({
-            'surveyId': 'dummy_ID',
-            'ageModel': age_binary,
-            'genderModel': gender_binary,
-            'encoder': encoder_binary
-        })
+        self.models.update_one(
+            filter={'surveyId': survey_id},
+            update={'$set': {
+                'surveyId': survey_id,
+                'ageModel': age_binary,
+                'genderModel': gender_binary,
+                'encoder': encoder_binary
+            }},
+            upsert=True
+        )
 
-    def predict_age_and_gender(self, survey_id, example):
+    def predict_age_and_gender(self, survey_id: str, example: list):
         data = self.models.find_one({'surveyId': survey_id})
         age_model: LinearModel = pickle.loads(data['ageModel'])
         gender_model = pickle.loads(data['genderModel'])
@@ -83,13 +86,13 @@ class PredictionService:
         return rf_model.fit(x, y.ravel())
 
     @staticmethod
-    def logistic_regresюsion_train(x, y) -> LogisticRegression:
+    def logistic_regression_train(x, y) -> LogisticRegression:
         lr_model = LogisticRegression(C=2.2, class_weight='balanced')
         lr_model.fit(x, y.ravel())
         return lr_model
 
     @staticmethod
-    def one_hot_encode(encoder: OneHotEncoder, example):
+    def one_hot_encode(encoder: OneHotEncoder, example: list):
         np_arr = np.array(example)
         if np_arr.ndim == 1:
             example = [example]
