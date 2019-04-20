@@ -5,7 +5,7 @@ import py_eureka_client.eureka_client as eureka_client
 app = Flask(__name__)
 
 # import not at the top because app definition is needed
-from src.api.analyze_controller import *
+from src.api.analytics_controller import *
 
 
 def run_app():
