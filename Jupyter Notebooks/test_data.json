@@ -1,0 +1,158 @@
+[
+  {
+    "Q1": "red",
+    "Q2": "history",
+    "Q3": "volleyball",
+    "gender": "f"
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "tennis",
+    "gender": "f"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "m"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "tennis",
+    "gender": "m"
+  },
+  {
+    "Q1": "red",
+    "Q2": "history",
+    "Q3": "tennis",
+    "gender": "f"
+  },
+  {
+    "Q1": "red",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "m"
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "volleyball",
+    "gender": "f"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "basketball",
+    "gender": "m"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "tennis",
+    "gender": "m"
+  },
+  {
+    "Q1": "red",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "m"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "psychology",
+    "Q3": "basketball",
+    "gender": "m"
+  },
+  {
+    "Q1": "red",
+    "Q2": "engineering",
+    "Q3": "tennis",
+    "gender": "f"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "f"
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "basketball",
+    "gender": "f"
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "volleyball",
+    "gender": "f"
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "tennis",
+    "gender": "f"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "tennis",
+    "gender": "m"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "basketball",
+    "gender": "m"
+  },
+  {
+    "Q1": "red",
+    "Q2": "history",
+    "Q3": "volleyball",
+    "gender": "f"
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "tennis",
+    "gender": "f"
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "volleyball",
+    "gender": "f"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "psychology",
+    "Q3": "volleyball",
+    "gender": "f"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "psychology",
+    "Q3": "basketball",
+    "gender": "f"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "basketball",
+    "gender": "m"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "m"
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "tennis",
+    "gender": "m"
+  }
+]

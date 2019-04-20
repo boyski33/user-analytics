@@ -1,0 +1,184 @@
+[
+  {
+    "Q1": "red",
+    "Q2": "history",
+    "Q3": "volleyball",
+    "gender": "f",
+    "age": 21
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "tennis",
+    "gender": "f",
+    "age": 24
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "m",
+    "age": 43
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "tennis",
+    "gender": "m",
+    "age": 29
+  },
+  {
+    "Q1": "red",
+    "Q2": "history",
+    "Q3": "tennis",
+    "gender": "f",
+    "age": 22
+  },
+  {
+    "Q1": "red",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "m",
+    "age": 27
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "volleyball",
+    "gender": "f",
+    "age": 20
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "basketball",
+    "gender": "m",
+    "age": 30
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "tennis",
+    "gender": "m",
+    "age": 28
+  },
+  {
+    "Q1": "red",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "m",
+    "age": 21
+  },
+  {
+    "Q1": "blue",
+    "Q2": "psychology",
+    "Q3": "basketball",
+    "gender": "m",
+    "age": 57
+  },
+  {
+    "Q1": "red",
+    "Q2": "engineering",
+    "Q3": "tennis",
+    "gender": "f",
+    "age": 25
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "f",
+    "age": 23
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "basketball",
+    "gender": "f",
+    "age": 42
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "volleyball",
+    "gender": "f",
+    "age": 19
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "tennis",
+    "gender": "f",
+    "age": 17
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "tennis",
+    "gender": "m",
+    "age": 27
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "basketball",
+    "gender": "m",
+    "age": 30
+  },
+  {
+    "Q1": "red",
+    "Q2": "history",
+    "Q3": "volleyball",
+    "gender": "f",
+    "age": 23
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "tennis",
+    "gender": "f",
+    "age": 19
+  },
+  {
+    "Q1": "red",
+    "Q2": "psychology",
+    "Q3": "volleyball",
+    "gender": "f",
+    "age": 26
+  },
+  {
+    "Q1": "blue",
+    "Q2": "psychology",
+    "Q3": "volleyball",
+    "gender": "f",
+    "age": 18
+  },
+  {
+    "Q1": "blue",
+    "Q2": "psychology",
+    "Q3": "basketball",
+    "gender": "f",
+    "age": 31
+  },
+  {
+    "Q1": "blue",
+    "Q2": "history",
+    "Q3": "basketball",
+    "gender": "m",
+    "age": 36
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "basketball",
+    "gender": "m",
+    "age": 19
+  },
+  {
+    "Q1": "blue",
+    "Q2": "engineering",
+    "Q3": "tennis",
+    "gender": "m",
+    "age": 19
+  }
+]
