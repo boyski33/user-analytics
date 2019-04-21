@@ -13,7 +13,7 @@ from sklearn.preprocessing import OneHotEncoder
 
 from src.config import config
 
-class_columns = ['age', 'gender']
+class_columns = config['class_columns']
 col_age = class_columns[:1]
 col_gender = class_columns[1:]
 

@@ -1,10 +1,10 @@
-import json
+from src.config import config
 
 import pandas as pd
 
 from src.core.prediction_service import PredictionService
 
-mock_feature_cols = ['Q1', 'Q2', 'Q3']
+class_columns = config['class_columns']
 
 gender_map = {
     'male': 'm',
@@ -19,8 +19,9 @@ class AnalyticsService:
 
     def train(self, survey_id: str, dataset: list):
         df = self.convert_dataset_to_panda(dataset)
-        print(df)
-        # self.prediction_service.train_and_persist_model(survey_id, df, mock_feature_cols)
+        feature_cols = list(df.drop(columns=class_columns).columns.values)
+
+        self.prediction_service.train_and_persist_model(survey_id, df, feature_cols)
 
     def predict(self, survey_id, data: dict):
         example = self.normalize_example(data)
@@ -31,7 +32,7 @@ class AnalyticsService:
 
     @staticmethod
     def convert_dataset_to_panda(dataset: list) -> pd.DataFrame:
-        normalized = dict(AnalyticsService.normalize_dataset(dataset))
+        normalized = AnalyticsService.normalize_dataset(dataset)
 
         return pd.DataFrame.from_dict(
             data=normalized,
@@ -39,7 +40,7 @@ class AnalyticsService:
         )
 
     @staticmethod
-    def normalize_dataset(dataset: list) -> list:
+    def normalize_dataset(dataset: list):
         normalized = []
         for d in dataset:
             normalized.append(AnalyticsService.normalize_data(d))
