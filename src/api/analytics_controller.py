@@ -12,9 +12,11 @@ def post_submission_batch():
     return jsonify(submission_batch)
 
 
-@app.route("/train/<survey_id>", methods=['PUT'])
-def train_model(survey_id):
-    analytics_service.train(survey_id, request.get_json())
+@app.route("/train", methods=['POST'])
+def train_model():
+    survey_data = request.get_json()
+
+    analytics_service.train(survey_data['surveyId'], survey_data['submissions'])
 
     return Response()
 

@@ -11,6 +11,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import OneHotEncoder
 
+from src.config import config
+
 class_columns = ['age', 'gender']
 col_age = class_columns[:1]
 col_gender = class_columns[1:]
@@ -19,8 +21,7 @@ col_gender = class_columns[1:]
 class PredictionService:
 
     def __init__(self):
-        self.client = MongoClient(
-            'mongodb+srv://admin:admin@hippo-cluster-gya0k.mongodb.net/hippo-survey-db?retryWrites=true')
+        self.client = MongoClient(config['mongo_connection'])
         self.db = self.client['hippo-survey-db']
         self.models = self.db['ml-models']
 
@@ -38,16 +39,16 @@ class PredictionService:
         self.persist_model(survey_id, age_model, gender_model, encoder)
 
     def persist_model(self, survey_id, age_model, gender_model, encoder):
-        age_binary = pickle.dumps(age_model)
-        gender_binary = pickle.dumps(gender_model)
+        age_model_binary = pickle.dumps(age_model)
+        gender_model_binary = pickle.dumps(gender_model)
         encoder_binary = pickle.dumps(encoder)
 
         self.models.update_one(
             filter={'surveyId': survey_id},
             update={'$set': {
                 'surveyId': survey_id,
-                'ageModel': age_binary,
-                'genderModel': gender_binary,
+                'ageModel': age_model_binary,
+                'genderModel': gender_model_binary,
                 'encoder': encoder_binary
             }},
             upsert=True
