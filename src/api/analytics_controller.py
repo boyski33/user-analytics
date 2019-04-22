@@ -21,8 +21,9 @@ def train_model():
     return Response()
 
 
-@app.route("/predict", methods=['POST'])
-def predict():
-    age, gender = analytics_service.predict('dummy_ID', {})
+@app.route("/predict/<survey_id>", methods=['POST'])
+def predict(survey_id: str):
+    data = request.get_json()
+    age, gender = analytics_service.predict(survey_id, data)
 
-    return jsonify(age=age, gender=gender)
+    return Response(response=[1, 2])

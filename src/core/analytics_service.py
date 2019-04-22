@@ -24,9 +24,9 @@ class AnalyticsService:
         self.prediction_service.train_and_persist_model(survey_id, df, feature_cols)
 
     def predict(self, survey_id, data: dict):
-        example = self.normalize_example(data)
+        examples = self.normalize_examples(data)
 
-        age, gender = self.prediction_service.predict_age_and_gender(survey_id, example)
+        age, gender = self.prediction_service.predict_age_and_gender(survey_id, examples)
 
         return list([int(a) for a in age]), list(gender)
 
@@ -68,5 +68,5 @@ class AnalyticsService:
         return normalized
 
     @staticmethod
-    def normalize_example(data: dict) -> list:
+    def normalize_examples(data: dict) -> list:
         return [['red', 'history', 'basketball']]
