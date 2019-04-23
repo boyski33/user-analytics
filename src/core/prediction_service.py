@@ -31,7 +31,7 @@ class PredictionService:
         genders = df[col_gender].values
         ages = df[col_age].values
 
-        encoder = OneHotEncoder().fit(df[feature_columns].values)
+        encoder = OneHotEncoder(handle_unknown='ignore').fit(df[feature_columns].values)
 
         age_model = self.linear_regression_train(feature_sets, ages)
         gender_model = self.random_forest_train(feature_sets, genders)

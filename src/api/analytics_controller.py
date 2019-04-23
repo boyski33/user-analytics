@@ -26,4 +26,7 @@ def predict(survey_id: str):
     data = request.get_json()
     age, gender = analytics_service.predict(survey_id, data)
 
-    return Response(response=[1, 2])
+    print(age)
+    print(gender)
+
+    return Response(response='god bless')

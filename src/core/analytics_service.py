@@ -24,7 +24,7 @@ class AnalyticsService:
         self.prediction_service.train_and_persist_model(survey_id, df, feature_cols)
 
     def predict(self, survey_id, data: dict):
-        examples = self.normalize_examples(data)
+        examples = self.normalize_examples(data['submissions'])
 
         age, gender = self.prediction_service.predict_age_and_gender(survey_id, examples)
 
@@ -68,5 +68,13 @@ class AnalyticsService:
         return normalized
 
     @staticmethod
-    def normalize_examples(data: dict) -> list:
-        return [['red', 'history', 'basketball']]
+    def normalize_examples(submissions: list) -> list:
+        result = []
+
+        for sub in submissions:
+            answers = []
+            for ans in sub['answers']:
+                answers.append(str(ans['answer']).lower())
+            result.append(answers)
+
+        return result
