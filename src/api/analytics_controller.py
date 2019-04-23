@@ -1,6 +1,9 @@
+from typing import List
+
 from flask import Response, request, jsonify
 
 from src.core.analytics_service import AnalyticsService
+from src.model.submission import Submission
 from src.run import app
 
 analytics_service = AnalyticsService()
@@ -24,9 +27,6 @@ def train_model():
 @app.route("/predict/<survey_id>", methods=['POST'])
 def predict(survey_id: str):
     data = request.get_json()
-    age, gender = analytics_service.predict(survey_id, data)
+    submissions: List[Submission] = analytics_service.predict(survey_id, data)
 
-    print(age)
-    print(gender)
-
-    return Response(response='god bless')
+    return Response(response=submissions)
