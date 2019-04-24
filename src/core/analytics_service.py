@@ -1,10 +1,7 @@
-from typing import List
-
 import pandas as pd
 
 from src.config import config
 from src.core.prediction_service import PredictionService
-from src.model.submission import Submission
 
 class_columns = config['class_columns']
 
@@ -25,16 +22,18 @@ class AnalyticsService:
 
         self.prediction_service.train_and_persist_model(survey_id, df, feature_cols)
 
-    def predict(self, survey_id, data: dict) -> List[Submission]:
-        submissions: List[Submission] = data['submissions']
+    def predict(self, survey_id, data: dict) -> list:
+        submissions: list = data['submissions']
         examples = self.normalize_examples(submissions)
 
-        age, gender = self.prediction_service.predict_age_and_gender(survey_id, examples)
+        age_list, gender_list = self.prediction_service.predict_age_and_gender(survey_id, examples)
 
-        for i in range(len(age)):
-            # todo refactor
-            submissions[i].user.age = age[i]
-            submissions[i].user.gender = gender[i]
+        for i in range(len(age_list)):
+            submissions[i]['user'] = {
+                'age': int(age_list[i]),
+                'gender': gender_list[i],
+                'is_predicted': True
+            }
 
         return submissions
 
@@ -76,7 +75,7 @@ class AnalyticsService:
         return normalized
 
     @staticmethod
-    def normalize_examples(submissions: List[Submission]) -> list:
+    def normalize_examples(submissions: list) -> list:
         result = []
 
         for sub in submissions:

@@ -1,6 +1,7 @@
-from flask import Flask
-from src.config import config
 import py_eureka_client.eureka_client as eureka_client
+from flask import Flask
+
+from src.config import config
 
 app = Flask(__name__)
 
