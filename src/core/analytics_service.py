@@ -1,14 +1,11 @@
 import pandas as pd
 
 from src.config import config
+
+from datetime import timedelta, date
 from src.core.prediction_service import PredictionService
 
 class_columns = config['class_columns']
-
-gender_map = {
-    'male': 'm',
-    'female': 'f'
-}
 
 
 class AnalyticsService:
@@ -30,7 +27,7 @@ class AnalyticsService:
 
         for i in range(len(age_list)):
             submissions[i]['user'] = {
-                'age': int(age_list[i]),
+                'dateOfBirth': AnalyticsService.convert_age_to_dob(int(age_list[i])),
                 'gender': gender_list[i],
                 'is_predicted': True
             }
@@ -58,7 +55,7 @@ class AnalyticsService:
     def normalize_data(data: dict) -> dict:
         result = {
             'age': data['userAge'],
-            'gender': gender_map[data['userGender']]
+            'gender': data['userGender']
         }
 
         answers = AnalyticsService.normalize_answers(data['answeredQuestions'])
@@ -85,3 +82,8 @@ class AnalyticsService:
             result.append(answers)
 
         return result
+
+    @staticmethod
+    def convert_age_to_dob(age: int):
+        d = date.today()
+        return d.replace(year=d.year - age)

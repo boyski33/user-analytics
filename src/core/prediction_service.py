@@ -56,6 +56,10 @@ class PredictionService:
 
     def predict_age_and_gender(self, survey_id: str, examples: list):
         data = self.models.find_one({'surveyId': survey_id})
+
+        if data is None:
+            return [], []
+
         age_model: LinearModel = pickle.loads(data['ageModel'])
         gender_model = pickle.loads(data['genderModel'])
         encoder: OneHotEncoder = pickle.loads(data['encoder'])
@@ -66,7 +70,6 @@ class PredictionService:
         gender: np.ndarray = gender_model.predict(examples)
 
         return age.tolist(), gender.tolist()
-
 
     ### TRAINING METHODS ###
 
@@ -99,7 +102,6 @@ class PredictionService:
             example = [example]
 
         return encoder.transform(example).toarray()
-
 
     ### TESTING METHODS ###
 
