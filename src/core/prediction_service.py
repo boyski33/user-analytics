@@ -11,7 +11,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import OneHotEncoder
 
-class_columns = ['age', 'gender']
+from src.config import config
+
+class_columns = config['class_columns']
 col_age = class_columns[:1]
 col_gender = class_columns[1:]
 
@@ -19,8 +21,7 @@ col_gender = class_columns[1:]
 class PredictionService:
 
     def __init__(self):
-        self.client = MongoClient(
-            'mongodb+srv://admin:admin@hippo-cluster-gya0k.mongodb.net/hippo-survey-db?retryWrites=true')
+        self.client = MongoClient(config['mongo_connection'])
         self.db = self.client['hippo-survey-db']
         self.models = self.db['ml-models']
 
@@ -30,7 +31,7 @@ class PredictionService:
         genders = df[col_gender].values
         ages = df[col_age].values
 
-        encoder = OneHotEncoder().fit(df[feature_columns].values)
+        encoder = OneHotEncoder(handle_unknown='ignore').fit(df[feature_columns].values)
 
         age_model = self.linear_regression_train(feature_sets, ages)
         gender_model = self.random_forest_train(feature_sets, genders)
@@ -38,34 +39,37 @@ class PredictionService:
         self.persist_model(survey_id, age_model, gender_model, encoder)
 
     def persist_model(self, survey_id, age_model, gender_model, encoder):
-        age_binary = pickle.dumps(age_model)
-        gender_binary = pickle.dumps(gender_model)
+        age_model_binary = pickle.dumps(age_model)
+        gender_model_binary = pickle.dumps(gender_model)
         encoder_binary = pickle.dumps(encoder)
 
         self.models.update_one(
             filter={'surveyId': survey_id},
             update={'$set': {
                 'surveyId': survey_id,
-                'ageModel': age_binary,
-                'genderModel': gender_binary,
+                'ageModel': age_model_binary,
+                'genderModel': gender_model_binary,
                 'encoder': encoder_binary
             }},
             upsert=True
         )
 
-    def predict_age_and_gender(self, survey_id: str, example: list):
+    def predict_age_and_gender(self, survey_id: str, examples: list):
         data = self.models.find_one({'surveyId': survey_id})
+
+        if data is None:
+            return [], []
+
         age_model: LinearModel = pickle.loads(data['ageModel'])
         gender_model = pickle.loads(data['genderModel'])
         encoder: OneHotEncoder = pickle.loads(data['encoder'])
 
-        example = self.one_hot_encode(encoder, example)
+        examples = self.one_hot_encode(encoder, examples)
 
-        age = age_model.predict(example)
-        gender = gender_model.predict(example)
+        age: np.ndarray = age_model.predict(examples)
+        gender: np.ndarray = gender_model.predict(examples)
 
-        return age, gender
-
+        return age.tolist(), gender.tolist()
 
     ### TRAINING METHODS ###
 
@@ -98,7 +102,6 @@ class PredictionService:
             example = [example]
 
         return encoder.transform(example).toarray()
-
 
     ### TESTING METHODS ###
 

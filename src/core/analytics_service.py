@@ -1,10 +1,11 @@
-import json
-
 import pandas as pd
 
+from src.config import config
+
+from datetime import timedelta, date
 from src.core.prediction_service import PredictionService
 
-mock_feature_cols = ['Q1', 'Q2', 'Q3']
+class_columns = config['class_columns']
 
 
 class AnalyticsService:
@@ -12,30 +13,77 @@ class AnalyticsService:
     def __init__(self):
         self.prediction_service = PredictionService()
 
-    def train(self, survey_id: str, data: dict):
-        df = self.convert_json_to_panda(data)
-        self.prediction_service.train_and_persist_model(survey_id, df, mock_feature_cols)
+    def train(self, survey_id: str, dataset: list):
+        df = self.convert_dataset_to_panda(dataset)
+        feature_cols = list(df.drop(columns=class_columns).columns.values)
 
-    def predict(self, survey_id, data: dict):
-        example = self.normalize_example(data)
+        self.prediction_service.train_and_persist_model(survey_id, df, feature_cols)
 
-        age, gender = self.prediction_service.predict_age_and_gender(survey_id, example)
+    def predict(self, survey_id, data: dict) -> list:
+        submissions: list = data['submissions']
+        examples = self.normalize_examples(submissions)
 
-        return list([int(a) for a in age]), list(gender)
+        age_list, gender_list = self.prediction_service.predict_age_and_gender(survey_id, examples)
+
+        for i in range(len(age_list)):
+            submissions[i]['user'] = {
+                'dateOfBirth': AnalyticsService.convert_age_to_dob(int(age_list[i])),
+                'gender': gender_list[i],
+                'is_predicted': True
+            }
+
+        return submissions
 
     @staticmethod
-    def convert_json_to_panda(data: dict) -> pd.DataFrame:
-        print(data)
-
-        file = 'mock_data/test_data.json'
-        with open(file) as f:
-            json_data = json.load(f)
+    def convert_dataset_to_panda(dataset: list) -> pd.DataFrame:
+        normalized = AnalyticsService.normalize_dataset(dataset)
 
         return pd.DataFrame.from_dict(
-            data=json_data,
+            data=normalized,
             orient='columns'
         )
 
     @staticmethod
-    def normalize_example(data: dict) -> list:
-        return [['red', 'history', 'basketball']]
+    def normalize_dataset(dataset: list):
+        normalized = []
+        for d in dataset:
+            normalized.append(AnalyticsService.normalize_data(d))
+
+        return normalized
+
+    @staticmethod
+    def normalize_data(data: dict) -> dict:
+        result = {
+            'age': data['userAge'],
+            'gender': data['userGender']
+        }
+
+        answers = AnalyticsService.normalize_answers(data['answeredQuestions'])
+        result = {**result, **answers}
+
+        return result
+
+    @staticmethod
+    def normalize_answers(answers: list) -> dict:
+        normalized = {}
+        for ans in answers:
+            normalized[ans['question']['key']] = str(ans['answer']).lower()
+
+        return normalized
+
+    @staticmethod
+    def normalize_examples(submissions: list) -> list:
+        result = []
+
+        for sub in submissions:
+            answers = []
+            for ans in sub['answers']:
+                answers.append(str(ans['answer']).lower())
+            result.append(answers)
+
+        return result
+
+    @staticmethod
+    def convert_age_to_dob(age: int):
+        d = date.today()
+        return d.replace(year=d.year - age)
