@@ -1,9 +1,9 @@
+from datetime import date
+
 import pandas as pd
 
-from src.config import config
-
-from datetime import timedelta, date
-from src.core.prediction_service import PredictionService
+from config import config
+from core.prediction_service import PredictionService
 
 class_columns = config['class_columns']
 
