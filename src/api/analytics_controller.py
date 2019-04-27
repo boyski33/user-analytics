@@ -16,7 +16,7 @@ def post_submission_batch():
 def train_model():
     survey_data = request.get_json()
 
-    analytics_servicetrain(survey_data['surveyId'], survey_data['submissions'])
+    analytics_service.train(survey_data['surveyId'], survey_data['submissions'])
 
     return Response()
 
