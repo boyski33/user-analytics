@@ -1,7 +1,7 @@
 from flask import Response, request, jsonify
 
-from src.core.analytics_service import AnalyticsService
-from src.run import app
+from core.analytics_service import AnalyticsService
+from run import app
 
 analytics_service = AnalyticsService()
 
@@ -16,7 +16,7 @@ def post_submission_batch():
 def train_model():
     survey_data = request.get_json()
 
-    analytics_service.train(survey_data['surveyId'], survey_data['submissions'])
+    analytics_servicetrain(survey_data['surveyId'], survey_data['submissions'])
 
     return Response()
 

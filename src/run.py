@@ -1,17 +1,22 @@
+#!/usr/bin/env python
+
+import os
+
 import py_eureka_client.eureka_client as eureka_client
 from flask import Flask
 
-from src.config import config
+from config import config
 
 app = Flask(__name__)
 
 # import not at the top because app definition is needed
-from src.api.analytics_controller import *
+from api.analytics_controller import *
 
 
 def run_app():
 
-    eureka_client.init(eureka_server=config["eureka_server_url"],
+    eureka_url = os.environ.get('EUREKA', config["eureka_server_url"])
+    eureka_client.init(eureka_server=eureka_url,
                        app_name=config["service_name"],
                        instance_port=config["service_port"])
 

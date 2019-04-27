@@ -7,7 +7,7 @@ Flask==1.0.2
 idna==2.8
 iniparse==0.4
 itsdangerous==1.1.0
-Jinja2==2.10
+Jinja2==2.10.1
 kitchen==1.2.5
 kiwisolver==1.0.1
 MarkupSafe==1.1.1
@@ -23,6 +23,6 @@ requests==2.21.0
 scikit-learn==0.20.3
 scipy==1.2.1
 six==1.11.0
-urllib3==1.24.1
+urllib3==1.24.2
 virtualenv==16.4.3
 Werkzeug==0.14.1

@@ -55,3 +55,6 @@ venv.bak/
 *.iws
 *.iml
 *.ipr
+
+# Jupyter
+notebooks/

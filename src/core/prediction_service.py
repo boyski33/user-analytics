@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import OneHotEncoder
 
-from src.config import config
+from config import config
 
 class_columns = config['class_columns']
 col_age = class_columns[:1]
