@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/boyski33/user-analytics.svg?branch=master)](https://travis-ci.com/boyski33/user-analytics)
 #### Python microservice for analyzing user submissions
 
 All survey submissions by logged-in users are fed to this service.
