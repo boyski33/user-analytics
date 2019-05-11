@@ -4,6 +4,7 @@ Click==7.0
 cycler==0.10.0
 dnspython==1.16.0
 Flask==1.0.2
+gunicorn==19.9.0
 idna==2.8
 iniparse==0.4
 itsdangerous==1.1.0
