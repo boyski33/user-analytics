@@ -6,6 +6,7 @@ from config import config
 from core.prediction_service import PredictionService
 
 class_columns = config['class_columns']
+supported_types = config['supported_question_types']
 
 
 class AnalyticsService:
@@ -17,7 +18,8 @@ class AnalyticsService:
         df = self.convert_dataset_to_panda(dataset)
         feature_cols = list(df.drop(columns=class_columns).columns.values)
 
-        self.prediction_service.train_and_persist_model(survey_id, df, feature_cols)
+        if len(feature_cols) > 0:
+            self.prediction_service.train_and_persist_model(survey_id, df, feature_cols)
 
     def predict(self, survey_id, data: dict) -> list:
         submissions: list = data['submissions']
@@ -58,7 +60,7 @@ class AnalyticsService:
             'gender': data['userGender']
         }
 
-        answers = AnalyticsService.normalize_answers(data['answeredQuestions'])
+        answers = AnalyticsService.normalize_answers(data['answers'])
         result = {**result, **answers}
 
         return result
@@ -67,7 +69,8 @@ class AnalyticsService:
     def normalize_answers(answers: list) -> dict:
         normalized = {}
         for ans in answers:
-            normalized[ans['question']['key']] = str(ans['answer']).lower()
+            if ans['question']['controlType'] in supported_types:
+                normalized[ans['question']['key']] = str(ans['answer']).lower()
 
         return normalized
 
@@ -78,7 +81,9 @@ class AnalyticsService:
         for sub in submissions:
             answers = []
             for ans in sub['answers']:
-                answers.append(str(ans['answer']).lower())
+                if ans['question']['controlType'] in supported_types:
+                    answers.append(str(ans['answer']).lower())
+
             result.append(answers)
 
         return result
