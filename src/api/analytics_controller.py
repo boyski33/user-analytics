@@ -6,12 +6,6 @@ from run import app
 analytics_service = AnalyticsService()
 
 
-@app.route("/submission-batch", methods=['POST'])
-def post_submission_batch():
-    submission_batch = request.get_json()
-    return jsonify(submission_batch)
-
-
 @app.route("/train", methods=['POST'])
 def train_model():
     survey_data = request.get_json()
