@@ -7,7 +7,7 @@ from config import config
 app = Flask(__name__)
 
 # import not at the top because app definition is needed
-from api.analytics_controller import *
+from analytics_controller import *
 
 
 def run_app():

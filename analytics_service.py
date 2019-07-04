@@ -3,7 +3,7 @@ from datetime import date
 import pandas as pd
 
 from config import config
-from core.prediction_service import PredictionService
+from prediction_service import PredictionService
 
 class_columns = config['class_columns']
 supported_types = config['supported_question_types']

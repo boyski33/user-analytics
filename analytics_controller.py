@@ -1,6 +1,6 @@
 from flask import Response, request, jsonify
 
-from core.analytics_service import AnalyticsService
+from analytics_service import AnalyticsService
 from run import app
 
 analytics_service = AnalyticsService()
