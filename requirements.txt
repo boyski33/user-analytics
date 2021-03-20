@@ -7,7 +7,7 @@ Flask==1.0.2
 idna==2.8
 iniparse==0.4
 itsdangerous==1.1.0
-Jinja2==2.10.1
+Jinja2==2.11.3
 kitchen==1.2.5
 kiwisolver==1.0.1
 MarkupSafe==1.1.1
